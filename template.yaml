@@ -1,5 +1,5 @@
 ---
-- hosts: myprodsrv01
+- hosts: all
   gather_facts: no
   tasks:
     - name: Copy MOTD into place
