@@ -1,0 +1,14 @@
+---
+- hosts: myprodsrv01
+  gather_facts: no
+  tasks:
+    - name: Copy MOTD into place
+      copy:
+        dest: /etc/motd
+        src:  /etc/motd
+        mode: 0644
+    - name: copy something else
+      copy:
+        dest: /tmp/hosts
+        src:  /etc/hosts
+        mode: 0777

@@ -1,0 +1,1 @@
+myprodsrv01 ansible_host=10.240.0.6 ansible_user=root ansible_password=password ansible_ssh_common_args='-o StrictHostKeyChecking=no'
