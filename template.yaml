@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  become: true
   gather_facts: no
   tasks:
     - name: Copy MOTD into place
@@ -7,8 +8,35 @@
         dest: /etc/motd
         src:  /etc/motd
         mode: 0644
-    - name: copy something else
-      copy:
-        dest: /tmp/hosts
-        src:  /etc/hosts
-        mode: 0777
+
+    - name: Update apt repo and cache on all Debian/Ubuntu boxes
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+    - name: Upgrade all packages on servers
+      apt: upgrade=dist force_apt_get=yes
+
+    - name: Clean unwanted olderstuff
+      apt:
+        autoremove: yes
+        purge: yes
+        
+   - name: Remove unnecessary packages
+     apt:
+       name: '{{ item }}'
+       state: purge 
+       update_cache: True
+       loop
+        - xinetd 
+        - nis 
+        - yp-tools
+        - tftpd 
+        - atftpd 
+        - tftpd-hpa
+        - telnetd
+        - rsh-server
+        - rsh-redone-server        
+        
+    - name: Disable root login
+      user:
+        name: root
+        password_lock: true
