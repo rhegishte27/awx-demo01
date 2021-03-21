@@ -1,7 +1,7 @@
 ---
 - hosts: all
   become: yes
-#  gather_facts: no
+  gather_facts: no
   tasks:
 
 #    - name: Just get information about the repository whether or not it has already been cloned locally
@@ -16,47 +16,28 @@
 #        src:  /srv/checkout/awx-demo01/motd
 #        mode: 0644
 
-#    - name: Update apt repo and cache on all Debian/Ubuntu boxes
-#      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
-#      become: yes
-#
-#
-#    - name: Upgrade all packages on servers
-#      apt: upgrade=dist force_apt_get=yes
-#      become: yes
+    - name: Update apt repo and cache on all Debian/Ubuntu boxes
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+
+    - name: Upgrade all packages on servers
+      apt: upgrade=dist force_apt_get=yes
 
 
     - name: Clean unwanted olderstuff
       apt:
         autoremove: yes
         purge: yes
-      become: yes        
+      become: yes
 
-    - name: Remove unnecessary packages
+    - name: Install necessary packages
       apt:
-        name: '{{ item }}'
-        state: purge
-        update_cache: True
-        with_items:
-         - xinetd
-         - nis
-         - yp-tools
-         - tftpd
-         - atftpd
-         - tftpd-hpa
-         - telnetd
-         - rsh-server
-         - rsh-redone-server
-      become: yes         
+        pkg: ['openssl', 'build-essential']
 
     - name: Disable root login over SSH
-      lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin" line="PermitRootLogin no" state=present
-      notify:
-        - restart sshd
-      become: yes        
+      command: sed -i 's!#PermitRootLogin prohibit-password!PermitRootLogin prohibit-password!g' /etc/ssh/sshd_config
 
-    - name: Disable password login
-      lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication" line="PasswordAuthentication no" state=present
-      notify:
-        - restart sshd
-      become: yes        
+    - name: Stop and Start ssh
+      service:
+        name: ssh
+        state: restarted
