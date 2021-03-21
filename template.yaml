@@ -27,21 +27,21 @@
         autoremove: yes
         purge: yes
         
-   - name: Remove unnecessary packages
-     apt:
-       name: '{{ item }}'
-       state: purge 
-       update_cache: True
-       loop
-        - xinetd 
-        - nis 
-        - yp-tools
-        - tftpd 
-        - atftpd 
-        - tftpd-hpa
-        - telnetd
-        - rsh-server
-        - rsh-redone-server        
+    - name: Remove unnecessary packages
+      apt:
+        name: '{{ item }}'
+        state: purge 
+        update_cache: True
+        loop
+         - xinetd 
+         - nis 
+         - yp-tools
+         - tftpd 
+         - atftpd 
+         - tftpd-hpa
+         - telnetd
+         - rsh-server
+         - rsh-redone-server        
         
     - name: Disable root login
       user:
