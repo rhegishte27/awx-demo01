@@ -33,9 +33,11 @@
     - name: Install necessary packages
       apt:
         pkg: ['openssl', 'build-essential']
-
-    - name: Disable root login over SSH
-      command: sed -i 's!#PermitRootLogin prohibit-password!PermitRootLogin prohibit-password!g' /etc/ssh/sshd_config
+        
+    - lineinfile:
+          path:  /etc/ssh/sshd_config
+          regexp: 'PermitRootLogin prohibit-password'
+          line: '#PermitRootLogin prohibit-password'
 
     - name: Stop and Start ssh
       service:
