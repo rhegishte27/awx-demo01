@@ -26,24 +26,29 @@
       apt:
         autoremove: yes
         purge: yes
-        
+
     - name: Remove unnecessary packages
       apt:
         name: '{{ item }}'
-        state: purge 
+        state: purge
         update_cache: True
-        loop
-         - xinetd 
-         - nis 
+        with_items:
+         - xinetd
+         - nis
          - yp-tools
-         - tftpd 
-         - atftpd 
+         - tftpd
+         - atftpd
          - tftpd-hpa
          - telnetd
          - rsh-server
-         - rsh-redone-server        
-        
-    - name: Disable root login
-      user:
-        name: root
-        password_lock: true
+         - rsh-redone-server
+
+    - name: Disable root login over SSH
+      lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin" line="PermitRootLogin no" state=present
+      notify:
+        - restart sshd
+
+    - name: Disable password login
+      lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication" line="PasswordAuthentication no" state=present
+      notify:
+        - restart sshd
